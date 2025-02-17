@@ -1,4 +1,4 @@
-# Backend Server Technical Sepcs
+# Backend Server Technical Specs
 
 ## Business Goal:
 
@@ -17,6 +17,8 @@ A language learning school wants to build a prototype of learning portal which w
 - Everything be treated as a single user
 
 ## Database Schema
+
+Our database will be a single sqlite database called `words.db` that will be in the root of the project folder of `backend_go`.
 
 We have the following tables:
 - words - stored vocabulary words
@@ -47,27 +49,342 @@ We have the following tables:
   - correct boolean
   - created_at datetime
 
-### API Endpoints
-- GET /api/dashboard/last_study_session
-- GET /api/dashboard/study_progress
-- GET /api/dashboard/quick-stats
-- GET /api/study_activities/:id
-- GET /api/study_activities/:id/study_sessions
-- POST /api/study_activities
-  - required params: group_id, study_activity_id
-- GET /api/words
+## API Endpoints
+### GET /api/dashboard/last_study_session
+#### JSON Response
+```json
+{
+  "id": 1,
+  "activity_name": "Vocabulary Practice",
+  "last_used": "2025-02-15T10:00:00Z",
+  "correct_count": 10,
+  "wrong_count": 2,
+  "group_id": 1,
+  "group_name": "Basic Vocabulary"
+}
+```
+
+
+### GET /api/dashboard/study_progress
+#### JSON Response
+```json
+{
+  "total_words_studied": 124,
+  "mastery_progress": 0
+}
+```
+
+### GET /api/dashboard/quick-stats
+#### JSON Response
+```json
+{
+  "success_rate": 80,
+  "total_study_sessions": 4,
+  "total_active_groups": 3,
+  "study_streak": 4
+}
+```
+
+### GET /api/study_activities/:id
+#### JSON Response
+```json
+{
+  "id": 1,
+  "name": "Vocabulary Practice",
+  "thumbnail_url": "url_to_thumbnail",
+  "description": "Practice basic vocabulary",
+}
+```
+
+### GET /api/study_activities/:id/study_sessions
+  - pagination with 100 per page
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "activity_name": "Vocabulary Practice",
+      "group_name": "Basic Vocabulary",
+      "start_time": "2025-02-15T10:00:00Z",
+      "end_time": "2025-02-15T10:30:00Z",
+      "number_of_review_items": 12
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### POST /api/study_activities
+#### Request Params
+  - group_id integer
+  - study_activity_id integer
+
+### JSON Response
+```json
+{
+  "id": 1,
+  "group_id": 1
+}
+```
+
+### GET /api/words
   - pagination with 100 items per page
-- GET /api/words/:id
-- GET /api/groups
+#### JSON response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "bahasa_indonesia": "kata",
+      "english": "word",
+      "correct_count": 10,
+      "wrong_count": 2
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### GET /api/words/:id
+#### JSON Response
+```json
+{
+  "id": 1,
+  "bahasa_indonesia": "kata",
+  "english": "word",
+  "correct_count": 10,
+  "wrong_count": 2,
+  "groups": [
+    {
+      "id": 1,
+      "name": "Basic Vocabulary"
+    }
+  ]
+}
+```
+
+### GET /api/groups
   - pagination with 100 items per page
-- GET /api/groups/:id
-- GET /api/groups/:id/words
-- GET /api/groups/:id/study_sessions
-- GET /api/study_sessions
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Basic Vocabulary",
+      "word_count": 100
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### GET /api/groups/:id
+#### JSON Response
+```json
+{
+  "id": 1,
+  "name": "Basic Vocabulary",
+  "word_count": 100
+}
+```
+
+### GET /api/groups/:id/words
   - pagination with 100 items per page
-- GET /api/study_sessions/:id
-- GET /api/study_sessions/:id/words
-- POST /api/reset_history
-- POST /api/full_reset
-- POST /api/study_sessions/:id/words/:word_id/review
-  - required params: correct
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "bahasa_indonesia": "kata",
+      "english": "word",
+      "correct_count": 10,
+      "wrong_count": 2
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### GET /api/groups/:id/study_sessions
+  - pagination with 100 items per page
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "activity_name": "Vocabulary Practice",
+      "group_name": "Basic Vocabulary",
+      "start_time": "2025-02-15T10:00:00Z",
+      "end_time": "2025-02-15T10:30:00Z",
+      "number_of_review_items": 12
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### GET /api/study_sessions
+  - pagination with 100 items per page
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "activity_name": "Vocabulary Practice",
+      "group_name": "Basic Vocabulary",
+      "start_time": "2025-02-15T10:00:00Z",
+      "end_time": "2025-02-15T10:30:00Z",
+      "number_of_review_items": 12
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### GET /api/study_sessions/:id
+#### JSON Response
+```json
+{
+  "id": 1,
+  "activity_name": "Vocabulary Practice",
+  "group_name": "Basic Vocabulary",
+  "start_time": "2025-02-15T10:00:00Z",
+  "end_time": "2025-02-15T10:30:00Z",
+  "number_of_review_items": 12
+}
+```
+
+### GET /api/study_sessions/:id/words
+#### JSON Response
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "bahasa_indonesia": "kata",
+      "english": "word",
+      "correct": true,
+      "created_at": "2025-02-15T10:05:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 100,
+    "total_pages": 1,
+    "total_items": 1
+  }
+}
+```
+
+### POST /api/reset_history
+#### JSON Response
+```json
+{
+  "success": true,
+  "message": "History reset successfully"
+}
+```
+
+### POST /api/full_reset
+#### JSON Response
+```json
+{
+  "success": true
+  "message": "Full reset successfully"
+}
+```
+
+### POST /api/study_sessions/:id/words/:word_id/review
+#### Request Params
+  - id (study_session_id) integer
+  - word_id integer
+  - correct boolean
+
+#### Request Payload
+```json
+{
+  "correct": true
+}
+```
+
+### JSON Response
+```json
+{
+  "id": 1,
+  "word_id": 1,
+  "study_session_id": 1,
+  "correct": true,
+  "created_at": "2025-02-15T10:05:00Z"
+}
+```
+
+## Mage Tasks
+
+Mage is a task runner for Go.
+Lets list out possible tasks we need for our lang portal.
+
+### Initialize Database
+This task will initialize the sqlite database called `words.db`.
+
+### Migrate Database
+This task will run a series of migrations sql files on the database.
+
+Migrations live in the `migrations` folder.
+The migration files will be run in order of their file name.
+The file names should look like this:
+```sql
+0001_init.sql
+0002_create_words_table.sql
+```
+
+### Seed Data
+This task will import json files and transform them into target data for our database.
+
+All seed files live in the `seeds` folder.
+All seed files should be loaded.
+
+In our task we should have DSL to specific each seed file and its expected group word name.
+```json
+[
+  {
+    "bahasa_indonesia": "kata",
+    "english": "word"
+  },
+  ...
+]
+```
