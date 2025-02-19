@@ -12,9 +12,70 @@ A language learning school wants to build a prototype of learning portal which w
 - The backend will be built using Go
 - The database will be SQLite3
 - The API will be built using Gin
+- Mage is a task runner for Go
 - The API will always return JSON
 - There will no authentication or authorization
 - Everything be treated as a single user
+
+## Directory Structure
+
+```
+backend_go/
+├── api/
+│   ├── handlers/
+│   │   ├── dashboard.go
+│   │   ├── groups.go
+│   │   ├── study_activities.go
+│   │   ├── study_sessions.go
+│   │   └── words.go
+│   ├── models/
+│   │   ├── group.go
+│   │   ├── study_activity.go
+│   │   ├── study_session.go
+│   │   └── word.go
+│   ├── repositories/
+│   │   ├── db.go
+│   │   ├── group_repository.go
+│   │   ├── study_activity_repository.go
+│   │   ├── study_session_repository.go
+│   │   └── word_repository.go
+│   ├── services/
+│   │   ├── dashboard.go
+│   │   ├── group.go
+│   │   ├── study_activity.go
+│   │   ├── study_session.go
+│   │   └── word.go
+│   └── routes/
+│       └── routes.go
+├── cmd/
+│   └── server/
+│       └── main.go
+├── db/
+│   ├── migrations/
+│   │   ├── 0001_init.sql
+│   │   └── 0002_create_tables.sql
+│   └── seeds/
+│       └── basic_vocabulary.json
+├── magefile.go
+├── go.mod
+├── words.db
+└── README.md
+```
+
+### Layers
+ - Handlers (/api/handlers/) - HTTP request/response handling
+ - Services (/api/services/) - Business logic implementation
+ - Repositories (/api/repositories/) - Database operations
+ - Models (/api/models/) - Data structures
+ - Routes (/api/routes/) - API routing
+ - Database (/db/) - Migrations and seeds
+
+### Flow
+ 1. Request → Routes
+ 1. Routes → Handlers
+ 1. Handlers → Services
+ 1. Services → Repositories
+ 1. Repositories → Database
 
 ## Database Schema
 
@@ -25,7 +86,6 @@ We have the following tables:
   - id integer
   - bahasa_indonesia string
   - english string
-  - parts json
 - words_groups - join table for words and groups many-to-many
   - id integer
   - word_id integer
@@ -311,24 +371,6 @@ We have the following tables:
 }
 ```
 
-### POST /api/reset_history
-#### JSON Response
-```json
-{
-  "success": true,
-  "message": "History reset successfully"
-}
-```
-
-### POST /api/full_reset
-#### JSON Response
-```json
-{
-  "success": true
-  "message": "Full reset successfully"
-}
-```
-
 ### POST /api/study_sessions/:id/words/:word_id/review
 #### Request Params
   - id (study_session_id) integer
@@ -353,7 +395,25 @@ We have the following tables:
 }
 ```
 
-## Mage Tasks
+### POST /api/reset_history
+#### JSON Response
+```json
+{
+  "success": true,
+  "message": "History reset successfully"
+}
+```
+
+### POST /api/full_reset
+#### JSON Response
+```json
+{
+  "success": true
+  "message": "Full reset successfully"
+}
+```
+
+## Task Runner Tasks
 
 Mage is a task runner for Go.
 Lets list out possible tasks we need for our lang portal.
